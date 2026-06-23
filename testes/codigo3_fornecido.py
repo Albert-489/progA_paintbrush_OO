@@ -77,7 +77,7 @@ def main():
 
     frame.pack()
 
-    # Eventos de mouse associados ao canvas - com seus callbacks.
+    # Eventos de mouse associados ao canvas - com seus callbacks
     canvas.bind('<ButtonPress-1>', iniciar_figura_nova)
     canvas.bind('<B1-Motion>', atualizar_figura_nova)
     canvas.bind('<ButtonRelease-1>', incluir_figura_nova)

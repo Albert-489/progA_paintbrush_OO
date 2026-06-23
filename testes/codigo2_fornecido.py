@@ -30,7 +30,7 @@ root = tk.Tk()
 canvas = tk.Canvas(root, bg='white', width=600, height=600)
 canvas.pack()
 
-ini_x = None  # coordenadas do ponto inicial da linha.
+ini_x = None  # coordenadas do ponto inicial da linha
 ini_y = None
 fim_x = None
 fim_y = None
