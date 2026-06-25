@@ -91,7 +91,6 @@ def main():
     combobox_ferramenta.set('Linha')
     combobox_ferramenta.pack(side=tk.LEFT, padx=5)
 
-    #Componente 2: Seleção de Cor da Borda ---
     lbl_borda = ttk.Label(frame_controles, text='Borda:')
     lbl_borda.pack(side=tk.LEFT, padx=5)
     
