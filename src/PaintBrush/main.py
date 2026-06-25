@@ -1,22 +1,19 @@
-#Vazio import tkinter as tk
 from tkinter import ttk
 
-# Quando mouse é pressionado
 def iniciar_figura_nova(event):
     global figura_nova
     ferramenta = ferramenta_var.get()
     
-    # Captura as cores atuais selecionadas na interface
     cor_borda = cor_borda_var.get()
     cor_preenchimento = cor_preenchimento_var.get()
     
     if ferramenta == 'Mão Livre':
         figura_nova = ("rabisco", [(event.x, event.y)], cor_borda, cor_preenchimento)
     else:
-        # Para Linha, Retângulo e Oval, usamos 4 coordenadas estruturadas
+  
         figura_nova = (ferramenta.lower(), (event.x, event.y, event.x, event.y), cor_borda, cor_preenchimento)
 
-# Quando mouse é movido com o botão pressionado
+
 def atualizar_figura_nova(event):
     global figura_nova
     tipo, values, cor_b, cor_p = figura_nova
@@ -30,7 +27,6 @@ def atualizar_figura_nova(event):
     desenhar()
     desenhar_figura_nova()
 
-# Quando mouse é solto
 def incluir_figura_nova(event):
     if not incompleta(figura_nova): 
         figuras.append(figura_nova)
@@ -68,12 +64,12 @@ def incompleta(figura):
     if tipo == "rabisco":
         return len(values) <= 1
     else:
-        # Evita criar figuras sem dimensão (onde o ponto inicial é igual ao final)
+    
         return (values[0], values[1]) == (values[2], values[3])
 
 
-figuras = []       # Todas as figuras desenhadas
-figura_nova = None # Figura que está sendo desenhada
+figuras = []       
+figura_nova = None 
 
 
 def main():
@@ -85,7 +81,7 @@ def main():
     frame_controles = tk.Frame(root)
     frame_controles.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
 
-    # --- Componente 1: Seleção de Ferramenta ---
+  
     lbl_ferramenta = ttk.Label(frame_controles, text='Ferramenta:')
     lbl_ferramenta.pack(side=tk.LEFT, padx=5)
     
@@ -105,7 +101,6 @@ def main():
     combobox_borda.set('black')
     combobox_borda.pack(side=tk.LEFT, padx=5)
 
-    # --- Componente 3: Seleção de Cor de Preenchimento ---
     lbl_preenchimento = ttk.Label(frame_controles, text='Preenchimento:')
     lbl_preenchimento.pack(side=tk.LEFT, padx=5)
     
@@ -115,11 +110,9 @@ def main():
     combobox_preenchimento.set('Nenhum')
     combobox_preenchimento.pack(side=tk.LEFT, padx=5)
 
-    # --- Área de desenho ---
     canvas = tk.Canvas(root, bg='white', width=600, height=600)
     canvas.pack(side=tk.BOTTOM, padx=5, pady=5)
 
-    # Eventos de mouse associados ao canvas
     canvas.bind('<ButtonPress-1>', iniciar_figura_nova)
     canvas.bind('<B1-Motion>', atualizar_figura_nova)
     canvas.bind('<ButtonRelease-1>', incluir_figura_nova)
