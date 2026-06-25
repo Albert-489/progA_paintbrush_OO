@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import ttk
 
 def iniciar_figura_nova(event):
@@ -10,9 +11,7 @@ def iniciar_figura_nova(event):
     if ferramenta == 'Mão Livre':
         figura_nova = ("rabisco", [(event.x, event.y)], cor_borda, cor_preenchimento)
     else:
-  
         figura_nova = (ferramenta.lower(), (event.x, event.y, event.x, event.y), cor_borda, cor_preenchimento)
-
 
 def atualizar_figura_nova(event):
     global figura_nova
@@ -64,12 +63,11 @@ def incompleta(figura):
     if tipo == "rabisco":
         return len(values) <= 1
     else:
-    
         return (values[0], values[1]) == (values[2], values[3])
 
 
-figuras = []       
-figura_nova = None 
+figuras = []     
+figura_nova = None
 
 
 def main():
@@ -81,7 +79,6 @@ def main():
     frame_controles = tk.Frame(root)
     frame_controles.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
 
-  
     lbl_ferramenta = ttk.Label(frame_controles, text='Ferramenta:')
     lbl_ferramenta.pack(side=tk.LEFT, padx=5)
     
@@ -91,6 +88,7 @@ def main():
     combobox_ferramenta.set('Linha')
     combobox_ferramenta.pack(side=tk.LEFT, padx=5)
 
+   
     lbl_borda = ttk.Label(frame_controles, text='Borda:')
     lbl_borda.pack(side=tk.LEFT, padx=5)
     
@@ -119,4 +117,4 @@ def main():
     root.mainloop()
 
 if __name__ == "__main__":
-    main()por enquanto.
+    main()
