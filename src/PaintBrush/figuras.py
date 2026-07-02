@@ -93,7 +93,7 @@ class Poligono(Figura):
 
     def atualizar(self, x, y):
 
-        raio = math.sqrt((x - self.cx)*2 + (y - self.cy)*2)
+        raio = math.sqrt((x - self.cx)**2 + (y - self.cy)**2)
         
         angulo_base = math.atan2(y - self.cy, x - self.cx)
         
