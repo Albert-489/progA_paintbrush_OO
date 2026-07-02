@@ -17,7 +17,9 @@ class PaintApp:
         frame_controles = tk.Frame(self.root)
         frame_controles.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
 
- 
+        sair_botao = ttk.Button(frame_controles, text='Sair', command = lambda: root.quit())
+        sair_botao.pack(side=tk.RIGHT, padx=5)
+
         ttk.Label(frame_controles, text='Ferramenta:').pack(side=tk.LEFT, padx=5)
         self.ferramenta_var = tk.StringVar()
         self.combobox_ferramenta = ttk.Combobox(frame_controles, textvariable=self.ferramenta_var, state="readonly", width=12)
@@ -28,19 +30,19 @@ class PaintApp:
         ttk.Label(frame_controles, text='Borda:').pack(side=tk.LEFT, padx=5)
         self.cor_borda_var = tk.StringVar()
         self.combobox_borda = ttk.Combobox(frame_controles, textvariable=self.cor_borda_var, state="readonly", width=10)
-        self.combobox_borda['values'] = ('black', 'red', 'blue', 'green', 'yellow')
+        self.combobox_borda['values'] = ('black', 'red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange')
         self.combobox_borda.set('black')
         self.combobox_borda.pack(side=tk.LEFT, padx=5)
 
         ttk.Label(frame_controles, text='Preenchimento:').pack(side=tk.LEFT, padx=5)
         self.cor_preenchimento_var = tk.StringVar()
         self.combobox_preenchimento = ttk.Combobox(frame_controles, textvariable=self.cor_preenchimento_var, state="readonly", width=10)
-        self.combobox_preenchimento['values'] = ('Nenhum', 'white', 'red', 'blue', 'green', 'yellow')
+        self.combobox_preenchimento['values'] = ('Nenhum', 'white', 'red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange')
         self.combobox_preenchimento.set('Nenhum')
         self.combobox_preenchimento.pack(side=tk.LEFT, padx=5)
 
-        self.canvas = tk.Canvas(self.root, bg='white', width=600, height=600)
-        self.canvas.pack(side=tk.BOTTOM, padx=5, pady=5)
+        self.canvas = tk.Canvas(self.root, bg='white', highlightthickness=0)
+        self.canvas.pack(side=tk.BOTTOM, padx=5, pady=5, fill='both', expand=True)
 
 
         self.canvas.bind('<ButtonPress-1>', self.iniciar_figura_nova)
@@ -100,4 +102,5 @@ class PaintApp:
 if __name__ == "__main__":
     root = tk.Tk()
     app = PaintApp(root)
+    root.attributes('-fullscreen', True)
     root.mainloop()
