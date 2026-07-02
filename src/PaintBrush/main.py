@@ -1,120 +1,97 @@
 import tkinter as tk
 from tkinter import ttk
+import figuras  
 
-def iniciar_figura_nova(event):
-    global figura_nova
-    ferramenta = ferramenta_var.get()
-    
-    cor_borda = cor_borda_var.get()
-    cor_preenchimento = cor_preenchimento_var.get()
-    
-    if ferramenta == 'Mão Livre':
-        figura_nova = ("rabisco", [(event.x, event.y)], cor_borda, cor_preenchimento)
-    else:
-        figura_nova = (ferramenta.lower(), (event.x, event.y, event.x, event.y), cor_borda, cor_preenchimento)
-
-def atualizar_figura_nova(event):
-    global figura_nova
-    tipo, values, cor_b, cor_p = figura_nova
-    
-    if tipo == "rabisco":
-        values.append((event.x, event.y))
-        figura_nova = (tipo, values, cor_b, cor_p)
-    else:
-        figura_nova = (tipo, (values[0], values[1], event.x, event.y), cor_b, cor_p)
+class PaintApp:
+    def _init_(self, root):
+        self.root = root
+        self.root.title("Mini Paint - Orientado a Objetos")
         
-    desenhar()
-    desenhar_figura_nova()
-
-def incluir_figura_nova(event):
-    if not incompleta(figura_nova): 
-        figuras.append(figura_nova)
-    desenhar()
-
-def desenhar():
-    canvas.delete("all")
-    for tipo, values, cor_borda, cor_preenchimento in figuras:
-        fill_color = "" if cor_preenchimento == "Nenhum" else cor_preenchimento
+    
+        self.figuras_desenhadas = []       
+        self.figura_atual = None 
         
-        if tipo == "linha":
-            canvas.create_line(values[0], values[1], values[2], values[3], fill=cor_borda)
-        elif tipo == "retângulo":
-            canvas.create_rectangle(values[0], values[1], values[2], values[3], outline=cor_borda, fill=fill_color)
-        elif tipo == "oval":
-            canvas.create_oval(values[0], values[1], values[2], values[3], outline=cor_borda, fill=fill_color)
-        elif tipo == "rabisco":
-            canvas.create_line(values, fill=cor_borda)
+        self.configurar_interface()
 
-def desenhar_figura_nova():
-    tipo, values, cor_borda, cor_preenchimento = figura_nova
-    fill_color = "" if cor_preenchimento == "Nenhum" else cor_preenchimento
-    
-    if tipo == "linha":
-        canvas.create_line(values[0], values[1], values[2], values[3], fill=cor_borda, dash=(4, 2))
-    elif tipo == "retângulo":
-        canvas.create_rectangle(values[0], values[1], values[2], values[3], outline=cor_borda, fill=fill_color, dash=(4, 2))
-    elif tipo == "oval":
-        canvas.create_oval(values[0], values[1], values[2], values[3], outline=cor_borda, fill=fill_color, dash=(4, 2))
-    elif tipo == "rabisco":
-        canvas.create_line(values, fill=cor_borda, dash=(4, 2))
-
-def incompleta(figura):
-    tipo, values, _, _ = figura
-    if tipo == "rabisco":
-        return len(values) <= 1
-    else:
-        return (values[0], values[1]) == (values[2], values[3])
-
-
-figuras = []     
-figura_nova = None
-
-
-def main():
-    global canvas, ferramenta_var, cor_borda_var, cor_preenchimento_var
-
-    root = tk.Tk()
-    root.title("Mini Paint - Entrega 3")
-    
-    frame_controles = tk.Frame(root)
-    frame_controles.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
-
-    lbl_ferramenta = ttk.Label(frame_controles, text='Ferramenta:')
-    lbl_ferramenta.pack(side=tk.LEFT, padx=5)
-    
-    ferramenta_var = tk.StringVar(root)
-    combobox_ferramenta = ttk.Combobox(frame_controles, textvariable=ferramenta_var, state="readonly", width=12)
-    combobox_ferramenta['values'] = ('Linha', 'Mão Livre', 'Retângulo', 'Oval')
-    combobox_ferramenta.set('Linha')
-    combobox_ferramenta.pack(side=tk.LEFT, padx=5)
+    def configurar_interface(self):
+        frame_controles = tk.Frame(self.root)
+        frame_controles.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
 
    
-    lbl_borda = ttk.Label(frame_controles, text='Borda:')
-    lbl_borda.pack(side=tk.LEFT, padx=5)
-    
-    cor_borda_var = tk.StringVar(root)
-    combobox_borda = ttk.Combobox(frame_controles, textvariable=cor_borda_var, state="readonly", width=10)
-    combobox_borda['values'] = ('black', 'red', 'blue', 'green', 'yellow')
-    combobox_borda.set('black')
-    combobox_borda.pack(side=tk.LEFT, padx=5)
+        ttk.Label(frame_controles, text='Ferramenta:').pack(side=tk.LEFT, padx=5)
+        self.ferramenta_var = tk.StringVar()
+        self.combobox_ferramenta = ttk.Combobox(frame_controles, textvariable=self.ferramenta_var, state="readonly", width=12)
+        self.combobox_ferramenta['values'] = ('Linha', 'Mão Livre', 'Retângulo', 'Oval')
+        self.combobox_ferramenta.set('Linha')
+        self.combobox_ferramenta.pack(side=tk.LEFT, padx=5)
 
-    lbl_preenchimento = ttk.Label(frame_controles, text='Preenchimento:')
-    lbl_preenchimento.pack(side=tk.LEFT, padx=5)
-    
-    cor_preenchimento_var = tk.StringVar(root)
-    combobox_preenchimento = ttk.Combobox(frame_controles, textvariable=cor_preenchimento_var, state="readonly", width=10)
-    combobox_preenchimento['values'] = ('Nenhum', 'white', 'red', 'blue', 'green', 'yellow')
-    combobox_preenchimento.set('Nenhum')
-    combobox_preenchimento.pack(side=tk.LEFT, padx=5)
+        ttk.Label(frame_controles, text='Borda:').pack(side=tk.LEFT, padx=5)
+        self.cor_borda_var = tk.StringVar()
+        self.combobox_borda = ttk.Combobox(frame_controles, textvariable=self.cor_borda_var, state="readonly", width=10)
+        self.combobox_borda['values'] = ('black', 'red', 'blue', 'green', 'yellow')
+        self.combobox_borda.set('black')
+        self.combobox_borda.pack(side=tk.LEFT, padx=5)
 
-    canvas = tk.Canvas(root, bg='white', width=600, height=600)
-    canvas.pack(side=tk.BOTTOM, padx=5, pady=5)
+        ttk.Label(frame_controles, text='Preenchimento:').pack(side=tk.LEFT, padx=5)
+        self.cor_preenchimento_var = tk.StringVar()
+        self.combobox_preenchimento = ttk.Combobox(frame_controles, textvariable=self.cor_preenchimento_var, state="readonly", width=10)
+        self.combobox_preenchimento['values'] = ('Nenhum', 'white', 'red', 'blue', 'green', 'yellow')
+        self.combobox_preenchimento.set('Nenhum')
+        self.combobox_preenchimento.pack(side=tk.LEFT, padx=5)
 
-    canvas.bind('<ButtonPress-1>', iniciar_figura_nova)
-    canvas.bind('<B1-Motion>', atualizar_figura_nova)
-    canvas.bind('<ButtonRelease-1>', incluir_figura_nova)
+        self.canvas = tk.Canvas(self.root, bg='white', width=600, height=600)
+        self.canvas.pack(side=tk.BOTTOM, padx=5, pady=5)
 
+
+        self.canvas.bind('<ButtonPress-1>', self.iniciar_figura_nova)
+        self.canvas.bind('<B1-Motion>', self.atualizar_figura_nova)
+        self.canvas.bind('<ButtonRelease-1>', self.incluir_figura_nova)
+
+    def criar_instancia_figura(self, ferramenta, x, y, cor_b, cor_p):
+        
+        fill_color = "" if cor_p == "Nenhum" else cor_p
+
+        if ferramenta == 'Mão Livre':
+            return figuras.Rabisco(x, y, cor_b)
+        elif ferramenta == 'Linha':
+            return figuras.Linha(x, y, cor_b)
+        elif ferramenta == 'Retângulo':
+            return figuras.Retangulo(x, y, cor_b, fill_color)
+        elif ferramenta == 'Oval':
+            return figuras.Oval(x, y, cor_b, fill_color)
+        return None
+
+    def iniciar_figura_nova(self, event):
+        ferramenta = self.ferramenta_var.get()
+        cor_borda = self.cor_borda_var.get()
+        cor_preenchimento = self.cor_preenchimento_var.get()
+        
+        self.figura_atual = self.criar_instancia_figura(ferramenta, event.x, event.y, cor_borda, cor_preenchimento)
+
+    def atualizar_figura_nova(self, event):
+        if self.figura_atual:
+            self.figura_atual.atualizar(event.x, event.y)
+            self.renderizar_tela()
+
+    def incluir_figura_nova(self, event):
+        if self.figura_atual:
+            if not self.figura_atual.esta_incompleta():
+                self.figuras_desenhadas.append(self.figura_atual)
+            self.figura_atual = None
+            self.renderizar_tela()
+
+    def renderizar_tela(self):
+      
+        self.canvas.delete("all")
+        
+        for figura in self.figuras_desenhadas:
+            figura.desenhar(self.canvas)
+            
+        if self.figura_atual:
+            self.figura_atual.desenhar(self.canvas, tracejado=True)
+
+
+if _name_ == "_main_":
+    root = tk.Tk()
+    app = PaintApp(root)
     root.mainloop()
-
-if __name__ == "__main__":
-    main()
