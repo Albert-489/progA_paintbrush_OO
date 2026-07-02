@@ -22,7 +22,7 @@ class Figura(ABC):
 class Rabisco(Figura):
    
     def __init__(self, x, y, cor_borda="black"):
-        super()._init_(cor_borda, cor_preenchimento="")
+        super().__init__(cor_borda, cor_preenchimento="")
         self.pontos = [(x, y)]
 
     def atualizar(self, x, y):
@@ -40,7 +40,7 @@ class Rabisco(Figura):
 class FiguraBidimensional(Figura):
   
     def __init__(self, x1, y1, cor_borda="black", cor_preenchimento=""):
-        super()._init_(cor_borda, cor_preenchimento)
+        super().__init__(cor_borda, cor_preenchimento)
         self.x1 = x1
         self.y1 = y1
         self.x2 = x1 
@@ -56,7 +56,7 @@ class FiguraBidimensional(Figura):
 
 class Linha(FiguraBidimensional):
     def init(self, x1, y1, cor_borda="black"):
-        super()._init_(x1, y1, cor_borda, cor_preenchimento="")
+        super().__init__(x1, y1, cor_borda, cor_preenchimento="")
 
     def desenhar(self, canvas, tracejado=False):
         dash_pattern = (4, 2) if tracejado else ""
@@ -85,7 +85,7 @@ class Oval(FiguraBidimensional):
 class Poligono(Figura):
  
     def __init__(self, x, y, num_lados, cor_borda="black", cor_preenchimento=""):
-        super()._init_(cor_borda, cor_preenchimento)
+        super().__init__(cor_borda, cor_preenchimento)
         self.cx = x         
         self.cy = y          
         self.num_lados = num_lados
