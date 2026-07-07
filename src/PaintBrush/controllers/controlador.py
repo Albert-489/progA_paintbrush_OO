@@ -3,13 +3,13 @@ from controllers.estado import (
     EstadoDesenhandoLinha, EstadoDesenhandoMaoLivre, EstadoDesenhandoRetangulo,
     EstadoDesenhandoOval, EstadoDesenhandoTriangulo, EstadoDesenhandoPentagono, EstadoDesenhandoHexagono
 )
+from tkinter import filedialog
 
 class Controlador:
     def __init__(self, desenho, interface):
         self.desenho = desenho
         self.interface = interface
         
-        # Mapeamento do padrão State (eliminando os if/elif)
         self.estados = {
             'Linha': EstadoDesenhandoLinha(),
             'Mão Livre': EstadoDesenhandoMaoLivre(),
@@ -20,17 +20,16 @@ class Controlador:
             'Hexágono': EstadoDesenhandoHexagono()
         }
         
-        # Define o estado inicial da aplicação
         ferramenta_inicial = self.interface.ferramenta_var.get()
         self.estado_atual = self.estados[ferramenta_inicial]
-        
-        # Evento para detectar quando o usuário muda a ferramenta no menu
+
         self.interface.combobox_ferramenta.bind('<<ComboboxSelected>>', self.mudar_estado)
 
-        # Liga os cliques na tela aos métodos do controlador
         self.interface.canvas.bind('<ButtonPress-1>', self.mouse_press)
         self.interface.canvas.bind('<B1-Motion>', self.mouse_drag)
         self.interface.canvas.bind('<ButtonRelease-1>', self.mouse_release)
+        self.interface.btn_salvar.config(command=self.salvar_desenho)
+        self.interface.btn_abrir.config(command=self.abrir_desenho)
 
     def mudar_estado(self, event=None):
         ferramenta = self.interface.ferramenta_var.get()
@@ -54,3 +53,19 @@ class Controlador:
             
         if self.desenho.figura_atual:
             self.desenho.figura_atual.desenhar(self.interface.canvas, tracejado=True)
+    
+    def salvar_desenho(self):
+        caminho = filedialog.asksaveasfilename(
+            defaultextension=".json",
+            filetypes=[("Arquivos JSON", "*.json"), ("Todos os Arquivos", "*.*")]
+        )
+        if caminho:
+            self.desenho.salvar_para_arquivo(caminho)
+
+    def abrir_desenho(self):
+        caminho = filedialog.askopenfilename(
+            filetypes=[("Arquivos JSON", "*.json"), ("Todos os Arquivos", "*.*")]
+        )
+        if caminho:
+            self.desenho.carregar_de_arquivo(caminho)
+            self.renderizar_tela()

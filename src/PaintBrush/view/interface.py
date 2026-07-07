@@ -8,6 +8,10 @@ class Interface:
         
         frame_controles = tk.Frame(self.root)
         frame_controles.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
+        self.btn_salvar = ttk.Button(frame_controles, text="Salvar")
+        self.btn_salvar.pack(side=tk.LEFT, padx=5)
+        self.btn_abrir = ttk.Button(frame_controles, text="Abrir")
+        self.btn_abrir.pack(side=tk.LEFT, padx=5)
         
         ttk.Label(frame_controles, text='Ferramenta:').pack(side=tk.LEFT, padx=5)
         self.ferramenta_var = tk.StringVar()
@@ -32,3 +36,5 @@ class Interface:
         
         self.canvas = tk.Canvas(self.root, bg='white', width=600, height=600)
         self.canvas.pack(side=tk.BOTTOM, padx=5, pady=5)
+
+        
