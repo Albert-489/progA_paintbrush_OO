@@ -7,6 +7,7 @@ from controllers.estado import (
 )
 from model.selecao_utils import mover_figura
 from tkinter import filedialog
+from tkinter import messagebox
 
 class Controlador:
     def __init__(self, desenho, interface):
@@ -42,11 +43,18 @@ class Controlador:
         self.interface.root.bind('<Control-v>', self.colar_figuras)
         
         self.interface.root.bind('<Key-f>', self.trazer_para_frente)
-        self.interface.root.bind('<Key-b>', self.enviar_para_tras)
+        self.interface.root.bind('<Key-t>', self.enviar_para_tras)
 
     def mudar_estado(self, event=None):
         ferramenta = self.interface.ferramenta_var.get()
         self.estado_atual = self.estados[ferramenta]
+        
+        if ferramenta == 'Selecionar':
+            messagebox.showinfo(
+                "Instruções de Seleção",
+                "Para selecionar múltiplas figuras, mantenha pressionada a tecla shift enquanto clica nas figuras com o mouse.\n\n"
+                "Para mover a figura para frente ou para trás selecione a figura e clique em f ou t respectivamente."
+            )
 
     def mouse_press(self, event):
         self.estado_atual.mouse_press(event, self)
@@ -98,7 +106,7 @@ class Controlador:
             novas_figuras = []
             for figura in self.figuras_copiadas:
                 nova_figura = copy.deepcopy(figura)
-                mover_figura(nova_figura, 20, 20)  # Desloca o lote clonado
+                mover_figura(nova_figura, 20, 20)
                 self.desenho.figuras_desenhadas.append(nova_figura)
                 novas_figuras.append(nova_figura)
             
