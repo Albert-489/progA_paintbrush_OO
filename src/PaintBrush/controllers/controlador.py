@@ -1,8 +1,11 @@
+import copy
 import model.figuras as figuras
 from controllers.estado import (
     EstadoDesenhandoLinha, EstadoDesenhandoMaoLivre, EstadoDesenhandoRetangulo,
-    EstadoDesenhandoOval, EstadoDesenhandoTriangulo, EstadoDesenhandoPentagono, EstadoDesenhandoHexagono
+    EstadoDesenhandoOval, EstadoDesenhandoTriangulo, EstadoDesenhandoPentagono, EstadoDesenhandoHexagono,
+    EstadoSelecionando
 )
+from model.selecao_utils import mover_figura
 from tkinter import filedialog
 
 class Controlador:
@@ -17,7 +20,8 @@ class Controlador:
             'Oval': EstadoDesenhandoOval(),
             'Triângulo': EstadoDesenhandoTriangulo(),
             'Pentágono': EstadoDesenhandoPentagono(),
-            'Hexágono': EstadoDesenhandoHexagono()
+            'Hexágono': EstadoDesenhandoHexagono(),
+            'Selecionar': EstadoSelecionando()
         }
         
         ferramenta_inicial = self.interface.ferramenta_var.get()
@@ -30,6 +34,11 @@ class Controlador:
         self.interface.canvas.bind('<ButtonRelease-1>', self.mouse_release)
         self.interface.btn_salvar.config(command=self.salvar_desenho)
         self.interface.btn_abrir.config(command=self.abrir_desenho)
+
+        self.figura_copiada = None
+        self.interface.root.bind('<Delete>', self.apagar_figura_selecionada)
+        self.interface.root.bind('<Control-c>', self.copiar_figura)
+        self.interface.root.bind('<Control-v>', self.colar_figura)
 
     def mudar_estado(self, event=None):
         ferramenta = self.interface.ferramenta_var.get()
@@ -68,4 +77,22 @@ class Controlador:
         )
         if caminho:
             self.desenho.carregar_de_arquivo(caminho)
+            self.renderizar_tela()
+
+    def apagar_figura_selecionada(self, event=None):
+        if self.desenho.figura_selecionada:
+            self.desenho.remover_figura(self.desenho.figura_selecionada)
+            self.renderizar_tela()
+
+    def copiar_figura(self, event=None):
+        if self.desenho.figura_selecionada:
+            self.figura_copiada = copy.deepcopy(self.desenho.figura_selecionada)
+
+    def colar_figura(self, event=None):
+        if self.figura_copiada:
+            nova_figura = copy.deepcopy(self.figura_copiada)
+            mover_figura(nova_figura, 20, 20)  # desloca pra nao colar exatamente em cima
+            self.desenho.figuras_desenhadas.append(nova_figura)
+            self.desenho.figura_selecionada = nova_figura
+            self.figura_copiada = nova_figura  # permite colar varias vezes com deslocamento incremental
             self.renderizar_tela()
