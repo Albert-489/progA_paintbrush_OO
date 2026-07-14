@@ -20,7 +20,7 @@ class Interface:
         ttk.Label(frame_controles, text='Ferramenta:').pack(side=tk.LEFT, padx=5)
         self.ferramenta_var = tk.StringVar()
         self.combobox_ferramenta = ttk.Combobox(frame_controles, textvariable=self.ferramenta_var, state="readonly", width=12)
-        self.combobox_ferramenta['values'] = ('Linha', 'Mão Livre', 'Retângulo', 'Oval', 'Triângulo', 'Pentágono', 'Hexágono')
+        self.combobox_ferramenta['values'] = ('Linha', 'Mão Livre', 'Retângulo', 'Oval', 'Triângulo', 'Pentágono', 'Hexágono', 'Selecionar')
         self.combobox_ferramenta.set('Linha')
         self.combobox_ferramenta.pack(side=tk.LEFT, padx=5)
         
