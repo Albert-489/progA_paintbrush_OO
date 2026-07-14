@@ -77,24 +77,41 @@ class EstadoSelecionando(EstadoApp):
         desenho = controlador.desenho
         figura_clicada = None
 
-        # percorre de tras pra frente: seleciona a figura desenhada por ultimo (fica visualmente por cima)
         for figura in reversed(desenho.figuras_desenhadas):
             if ponto_esta_na_figura(figura, event.x, event.y):
                 figura_clicada = figura
                 break
 
-        desenho.figura_selecionada = figura_clicada
-        self.arrastando = figura_clicada is not None
+        shift_pressionado = (event.state & 0x0001) != 0
+
+        if figura_clicada:
+            if shift_pressionado:
+                if figura_clicada in desenho.figuras_selecionadas:
+                    desenho.figuras_selecionadas.remove(figura_clicada)
+                else:
+                    desenho.figuras_selecionadas.append(figura_clicada)
+            else:
+                if figura_clicada not in desenho.figuras_selecionadas:
+                    desenho.figuras_selecionadas = [figura_clicada]
+            self.arrastando = True
+        else:
+            if not shift_pressionado:
+                desenho.figuras_selecionadas = []
+            self.arrastando = False
+
         self.ultimo_x = event.x
         self.ultimo_y = event.y
         controlador.renderizar_tela()
 
     def mouse_drag(self, event, controlador):
         desenho = controlador.desenho
-        if self.arrastando and desenho.figura_selecionada:
+        if self.arrastando and desenho.figuras_selecionadas:
             dx = event.x - self.ultimo_x
             dy = event.y - self.ultimo_y
-            mover_figura(desenho.figura_selecionada, dx, dy)
+            
+            for figura in desenho.figuras_selecionadas:
+                mover_figura(figura, dx, dy)
+                
             self.ultimo_x = event.x
             self.ultimo_y = event.y
             controlador.renderizar_tela()
