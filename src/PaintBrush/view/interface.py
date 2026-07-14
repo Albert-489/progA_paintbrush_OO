@@ -14,6 +14,7 @@ class Interface:
         self.btn_abrir = ttk.Button(frame_controles, text="Abrir")
         self.btn_abrir.pack(side=tk.LEFT, padx=5)
         
+        
         sair_botao = ttk.Button(frame_controles, text='Sair do programa', command= lambda: quit())
         sair_botao.pack(side=tk.RIGHT, padx=5)
 
@@ -37,8 +38,9 @@ class Interface:
         self.combobox_preenchimento['values'] = ('Nenhum', 'Branco', 'Vermelho', 'Azul', 'Verde', 'Amarelo', 'Laranja', 'Rosa', 'Marrom', 'Ciano', 'Cinza')
         self.combobox_preenchimento.set('Nenhum')
         self.combobox_preenchimento.pack(side=tk.LEFT, padx=5)
-        
+
         self.canvas = tk.Canvas(self.root, bg='white', width=1920, height=1080)
         self.canvas.pack(side=tk.BOTTOM, padx=5, pady=5)
-
-        
+   
+        self.combobox_borda.bind('<<ComboboxSelected>>', lambda e: self.root.event_generate("<<MudarCorBorda>>"))
+        self.combobox_preenchimento.bind('<<ComboboxSelected>>', lambda e: self.root.event_generate("<<MudarCorPreenchimento>>"))

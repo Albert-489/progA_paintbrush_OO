@@ -35,13 +35,14 @@ class Controlador:
         self.interface.canvas.bind('<ButtonRelease-1>', self.mouse_release)
         self.interface.btn_salvar.config(command=self.salvar_desenho)
         self.interface.btn_abrir.config(command=self.abrir_desenho)
-
+        
         self.figuras_copiadas = []
         
         self.interface.root.bind('<Delete>', self.apagar_figuras_selecionadas)
         self.interface.root.bind('<Control-c>', self.copiar_figuras)
         self.interface.root.bind('<Control-v>', self.colar_figuras)
-        
+        self.interface.root.bind("<<MudarCorBorda>>", self.atualizar_cor_borda)
+        self.interface.root.bind("<<MudarCorPreenchimento>>", self.atualizar_cor_preenchimento)
         self.interface.root.bind('<Key-f>', self.trazer_para_frente)
         self.interface.root.bind('<Key-t>', self.enviar_para_tras)
 
@@ -121,3 +122,24 @@ class Controlador:
     def enviar_para_tras(self, event=None):
         self.desenho.mover_para_tras()
         self.renderizar_tela()
+
+    def atualizar_cor_borda(self, event=None):
+        from controllers.estado import CORES
+        cor_pt = self.interface.cor_borda_var.get()
+        cor_en = CORES.get(cor_pt, 'black')
+
+        if self.desenho.figuras_selecionadas:
+            for figura in self.desenho.figuras_selecionadas:
+                figura.cor_borda = cor_en
+            self.renderizar_tela()
+
+    def atualizar_cor_preenchimento(self, event=None):
+        from controllers.estado import CORES
+        cor_pt = self.interface.cor_preenchimento_var.get()
+        cor_en = "" if cor_pt == "Nenhum" else CORES.get(cor_pt, "")
+
+        if self.desenho.figuras_selecionadas:
+            for figura in self.desenho.figuras_selecionadas:
+                if figura.__class__.__name__ not in ("Linha", "Rabisco"):
+                    figura.cor_preenchimento = cor_en
+            self.renderizar_tela()
