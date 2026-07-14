@@ -2,6 +2,21 @@ from abc import ABC, abstractmethod
 import model.figuras as figuras
 from model.selecao_utils import ponto_esta_na_figura, mover_figura
 
+CORES = {
+    'Preto': 'black',
+    'Branco': 'white',
+    'Vermelho': 'red',
+    'Azul': 'blue',
+    'Verde': 'green',
+    'Amarelo': 'yellow',
+    'Laranja': 'orange',
+    'Rosa': 'pink',
+    'Marrom': 'brown',
+    'Ciano': 'cyan',
+    'Cinza': 'grey',
+    'Nenhum': 'Nenhum'
+}
+
 class EstadoApp(ABC):
     @abstractmethod
     def mouse_press(self, event, controlador): pass
@@ -18,8 +33,12 @@ class EstadoDesenhandoBase(EstadoApp):
         pass
 
     def mouse_press(self, event, controlador):
-        cor_b = controlador.interface.cor_borda_var.get()
-        cor_p = controlador.interface.cor_preenchimento_var.get()
+        cor_b_pt = controlador.interface.cor_borda_var.get()
+        cor_p_pt = controlador.interface.cor_preenchimento_var.get()
+        
+        cor_b = CORES.get(cor_b_pt, 'black')
+        cor_p = CORES.get(cor_p_pt, '')
+        
         controlador.desenho.figura_atual = self.criar_figura(event.x, event.y, cor_b, cor_p)
 
     def mouse_drag(self, event, controlador):
