@@ -4,6 +4,13 @@ class Desenho:
     def __init__(self):
         self.figuras_desenhadas = []
         self.figura_atual = None
+        self.figura_selecionada = None
+
+    def remover_figura(self, figura):
+        if figura in self.figuras_desenhadas:
+            self.figuras_desenhadas.remove(figura)
+        if self.figura_selecionada is figura:
+            self.figura_selecionada = None
 
     def adicionar_figura(self):
         if self.figura_atual and not self.figura_atual.esta_incompleta():
