@@ -35,16 +35,19 @@ class Controlador:
         self.interface.btn_salvar.config(command=self.salvar_desenho)
         self.interface.btn_abrir.config(command=self.abrir_desenho)
 
-        self.figura_copiada = None
-        self.interface.root.bind('<Delete>', self.apagar_figura_selecionada)
-        self.interface.root.bind('<Control-c>', self.copiar_figura)
-        self.interface.root.bind('<Control-v>', self.colar_figura)
+        self.figuras_copiadas = []
+        
+        self.interface.root.bind('<Delete>', self.apagar_figuras_selecionadas)
+        self.interface.root.bind('<Control-c>', self.copiar_figuras)
+        self.interface.root.bind('<Control-v>', self.colar_figuras)
+        
+        self.interface.root.bind('<Key-f>', self.trazer_para_frente)
+        self.interface.root.bind('<Key-b>', self.enviar_para_tras)
 
     def mudar_estado(self, event=None):
         ferramenta = self.interface.ferramenta_var.get()
         self.estado_atual = self.estados[ferramenta]
 
-    # O Controlador não toma mais decisões, ele apenas delega para o estado atual
     def mouse_press(self, event):
         self.estado_atual.mouse_press(event, self)
 
@@ -58,7 +61,8 @@ class Controlador:
         self.interface.canvas.delete("all")
         
         for figura in self.desenho.figuras_desenhadas:
-            figura.desenhar(self.interface.canvas)
+            tracejada = figura in self.desenho.figuras_selecionadas
+            figura.desenhar(self.interface.canvas, tracejado=tracejada)
             
         if self.desenho.figura_atual:
             self.desenho.figura_atual.desenhar(self.interface.canvas, tracejado=True)
@@ -79,20 +83,33 @@ class Controlador:
             self.desenho.carregar_de_arquivo(caminho)
             self.renderizar_tela()
 
-    def apagar_figura_selecionada(self, event=None):
-        if self.desenho.figura_selecionada:
-            self.desenho.remover_figura(self.desenho.figura_selecionada)
+    def apagar_figuras_selecionadas(self, event=None):
+        for figura in list(self.desenho.figuras_selecionadas):
+            self.desenho.remover_figura(figura)
+        self.desenho.figuras_selecionadas = []
+        self.renderizar_tela()
+
+    def copiar_figuras(self, event=None):
+        if self.desenho.figuras_selecionadas:
+            self.figuras_copiadas = [copy.deepcopy(f) for f in self.desenho.figuras_selecionadas]
+
+    def colar_figuras(self, event=None):
+        if self.figuras_copiadas:
+            novas_figuras = []
+            for figura in self.figuras_copiadas:
+                nova_figura = copy.deepcopy(figura)
+                mover_figura(nova_figura, 20, 20)  # Desloca o lote clonado
+                self.desenho.figuras_desenhadas.append(nova_figura)
+                novas_figuras.append(nova_figura)
+            
+            self.desenho.figuras_selecionadas = novas_figuras
+            self.figuras_copiadas = novas_figuras
             self.renderizar_tela()
 
-    def copiar_figura(self, event=None):
-        if self.desenho.figura_selecionada:
-            self.figura_copiada = copy.deepcopy(self.desenho.figura_selecionada)
+    def trazer_para_frente(self, event=None):
+        self.desenho.mover_para_frente()
+        self.renderizar_tela()
 
-    def colar_figura(self, event=None):
-        if self.figura_copiada:
-            nova_figura = copy.deepcopy(self.figura_copiada)
-            mover_figura(nova_figura, 20, 20)  # desloca pra nao colar exatamente em cima
-            self.desenho.figuras_desenhadas.append(nova_figura)
-            self.desenho.figura_selecionada = nova_figura
-            self.figura_copiada = nova_figura  # permite colar varias vezes com deslocamento incremental
-            self.renderizar_tela()
+    def enviar_para_tras(self, event=None):
+        self.desenho.mover_para_tras()
+        self.renderizar_tela()
