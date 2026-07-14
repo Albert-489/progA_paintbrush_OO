@@ -27,14 +27,14 @@ class Interface:
         ttk.Label(frame_controles, text='Borda:').pack(side=tk.LEFT, padx=5)
         self.cor_borda_var = tk.StringVar()
         self.combobox_borda = ttk.Combobox(frame_controles, textvariable=self.cor_borda_var, state="readonly", width=10)
-        self.combobox_borda['values'] = ('Black', 'Red', 'Blue', 'Green', 'Yellow', 'Orange', 'Pink', 'Brown', 'Cyan', 'Grey')
-        self.combobox_borda.set('Black')
+        self.combobox_borda['values'] = ('Preto', 'Vermelho', 'Azul', 'Verde', 'Amarelo', 'Laranja', 'Rosa', 'Marrom', 'Ciano', 'Cinza')
+        self.combobox_borda.set('Preto')
         self.combobox_borda.pack(side=tk.LEFT, padx=5)
         
         ttk.Label(frame_controles, text='Preenchimento:').pack(side=tk.LEFT, padx=5)
         self.cor_preenchimento_var = tk.StringVar()
         self.combobox_preenchimento = ttk.Combobox(frame_controles, textvariable=self.cor_preenchimento_var, state="readonly", width=10)
-        self.combobox_preenchimento['values'] = ('Nenhum', 'White', 'Red', 'Blue', 'Green', 'Yellow', 'Orange', 'Pink', 'Brown', 'Cyan', 'Grey')
+        self.combobox_preenchimento['values'] = ('Nenhum', 'Branco', 'Vermelho', 'Azul', 'Verde', 'Amarelo', 'Laranja', 'Rosa', 'Marrom', 'Ciano', 'Cinza')
         self.combobox_preenchimento.set('Nenhum')
         self.combobox_preenchimento.pack(side=tk.LEFT, padx=5)
         
