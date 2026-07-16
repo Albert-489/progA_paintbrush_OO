@@ -1,5 +1,5 @@
 import json
-from model.figuras import figura_from_dict
+from model.figuras import figura_from_dict, FiguraComposta
 
 class Desenho:
     def __init__(self):
@@ -29,6 +29,41 @@ class Desenho:
             if figura in self.figuras_desenhadas:
                 self.figuras_desenhadas.remove(figura)
                 self.figuras_desenhadas.insert(0, figura)
+
+    def agrupar_selecionadas(self):
+        selecionadas = [f for f in self.figuras_selecionadas if f in self.figuras_desenhadas]
+
+        if len(selecionadas) < 2:
+            return None
+
+        indice_insercao = min(self.figuras_desenhadas.index(f) for f in selecionadas)
+
+        for figura in selecionadas:
+            self.figuras_desenhadas.remove(figura)
+
+        grupo = FiguraComposta(selecionadas)
+        self.figuras_desenhadas.insert(indice_insercao, grupo)
+
+        self.figuras_selecionadas = [grupo]
+        return grupo
+
+    def desagrupar_selecionadas(self):
+        grupos = [f for f in self.figuras_selecionadas
+                  if isinstance(f, FiguraComposta) and f in self.figuras_desenhadas]
+
+        if not grupos:
+            return []
+
+        novas_selecionadas = []
+        for grupo in grupos:
+            indice = self.figuras_desenhadas.index(grupo)
+            self.figuras_desenhadas.pop(indice)
+            for i, filha in enumerate(grupo.figuras):
+                self.figuras_desenhadas.insert(indice + i, filha)
+            novas_selecionadas.extend(grupo.figuras)
+
+        self.figuras_selecionadas = novas_selecionadas
+        return novas_selecionadas
 
     def salvar_para_arquivo(self, caminho):
         dados = [figura.to_dict() for figura in self.figuras_desenhadas]
