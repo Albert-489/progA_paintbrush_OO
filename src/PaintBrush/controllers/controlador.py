@@ -45,6 +45,15 @@ class Controlador:
         self.interface.root.bind("<<MudarCorPreenchimento>>", self.atualizar_cor_preenchimento)
         self.interface.root.bind('<Key-f>', self.trazer_para_frente)
         self.interface.root.bind('<Key-t>', self.enviar_para_tras)
+        self.interface.root.bind('<Control-g>', self.agrupar_figuras)
+        self.interface.root.bind('<Control-G>', self.agrupar_figuras)
+        self.interface.root.bind('<Control-u>', self.desagrupar_figuras)
+        self.interface.root.bind('<Control-U>', self.desagrupar_figuras)
+
+        if getattr(self.interface, 'btn_agrupar', None) is not None:
+            self.interface.btn_agrupar.config(command=self.agrupar_figuras)
+        if getattr(self.interface, 'btn_desagrupar', None) is not None:
+            self.interface.btn_desagrupar.config(command=self.desagrupar_figuras)
 
     def mudar_estado(self, event=None):
         ferramenta = self.interface.ferramenta_var.get()
@@ -54,7 +63,9 @@ class Controlador:
             messagebox.showinfo(
                 "Instruções de Seleção",
                 "Para selecionar múltiplas figuras, mantenha pressionada a tecla shift enquanto clica nas figuras com o mouse.\n\n"
-                "Para mover a figura para frente ou para trás selecione a figura e clique em f ou t respectivamente."
+                "Para mover a figura para frente ou para trás selecione a figura e clique em f ou t respectivamente.\n\n"
+                "Para agrupar as figuras selecionadas em uma única figura, use Ctrl+G.\n"
+                "Para desfazer o agrupamento de um grupo selecionado, use Ctrl+U."
             )
 
     def mouse_press(self, event):
@@ -130,7 +141,10 @@ class Controlador:
 
         if self.desenho.figuras_selecionadas:
             for figura in self.desenho.figuras_selecionadas:
-                figura.cor_borda = cor_en
+                if isinstance(figura, figuras.FiguraComposta):
+                    figura.definir_cor_borda(cor_en)
+                else:
+                    figura.cor_borda = cor_en
             self.renderizar_tela()
 
     def atualizar_cor_preenchimento(self, event=None):
@@ -140,6 +154,32 @@ class Controlador:
 
         if self.desenho.figuras_selecionadas:
             for figura in self.desenho.figuras_selecionadas:
-                if figura.__class__.__name__ not in ("Linha", "Rabisco"):
+                if isinstance(figura, figuras.FiguraComposta):
+                    figura.definir_cor_preenchimento(cor_en)
+                elif figura.__class__.__name__ not in ("Linha", "Rabisco"):
                     figura.cor_preenchimento = cor_en
             self.renderizar_tela()
+
+    def agrupar_figuras(self, event=None):
+        if len(self.desenho.figuras_selecionadas) < 2:
+            messagebox.showinfo(
+                "Agrupar",
+                "Selecione ao menos duas figuras (shift + clique) para agrupá-las."
+            )
+            return
+        self.desenho.agrupar_selecionadas()
+        self.renderizar_tela()
+
+    def desagrupar_figuras(self, event=None):
+        tem_grupo = any(
+            isinstance(f, figuras.FiguraComposta)
+            for f in self.desenho.figuras_selecionadas
+        )
+        if not tem_grupo:
+            messagebox.showinfo(
+                "Desagrupar",
+                "Selecione um grupo de figuras (criado com Ctrl+G) para desagrupá-lo."
+            )
+            return
+        self.desenho.desagrupar_selecionadas()
+        self.renderizar_tela()
