@@ -13,7 +13,12 @@ class Interface:
         self.btn_salvar.pack(side=tk.LEFT, padx=5)
         self.btn_abrir = ttk.Button(frame_controles, text="Abrir")
         self.btn_abrir.pack(side=tk.LEFT, padx=5)
-        
+
+        self.btn_agrupar = ttk.Button(frame_controles, text="Agrupar (Ctrl+G)")
+        self.btn_agrupar.pack(side=tk.LEFT, padx=5)
+        self.btn_desagrupar = ttk.Button(frame_controles, text="Desagrupar (Ctrl+U)")
+        self.btn_desagrupar.pack(side=tk.LEFT, padx=5)
+
         
         sair_botao = ttk.Button(frame_controles, text='Sair do programa', command= lambda: quit())
         sair_botao.pack(side=tk.RIGHT, padx=5)
