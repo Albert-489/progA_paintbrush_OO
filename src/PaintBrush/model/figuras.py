@@ -134,6 +134,64 @@ class Poligono(Figura):
         return data
 
 
+class FiguraComposta(Figura):
+
+    def __init__(self, figuras=None, cor_borda="black", cor_preenchimento=""):
+        super().__init__(cor_borda, cor_preenchimento)
+        self.figuras = list(figuras) if figuras else []
+
+    def adicionar(self, figura):
+        if figura not in self.figuras:
+            self.figuras.append(figura)
+
+    def remover(self, figura):
+        if figura in self.figuras:
+            self.figuras.remove(figura)
+
+    def atualizar(self, x, y):
+        pass
+
+    def desenhar(self, canvas, tracejado=False):
+        for figura in self.figuras:
+            figura.desenhar(canvas, tracejado=tracejado)
+
+    def esta_incompleta(self):
+        return len(self.figuras) == 0
+
+    def mover(self, dx, dy):
+        from model.selecao_utils import mover_figura
+        for figura in self.figuras:
+            mover_figura(figura, dx, dy)
+
+    def contem_ponto(self, x, y, tolerancia=5):
+        from model.selecao_utils import ponto_esta_na_figura
+        return any(
+            ponto_esta_na_figura(figura, x, y, tolerancia)
+            for figura in self.figuras
+        )
+
+    def definir_cor_borda(self, cor):
+        self.cor_borda = cor
+        for figura in self.figuras:
+            if isinstance(figura, FiguraComposta):
+                figura.definir_cor_borda(cor)
+            else:
+                figura.cor_borda = cor
+
+    def definir_cor_preenchimento(self, cor):
+        self.cor_preenchimento = cor
+        for figura in self.figuras:
+            if isinstance(figura, FiguraComposta):
+                figura.definir_cor_preenchimento(cor)
+            elif figura.__class__.__name__ not in ("Linha", "Rabisco"):
+                figura.cor_preenchimento = cor
+
+    def to_dict(self):
+        data = super().to_dict()
+        data["figuras"] = [figura.to_dict() for figura in self.figuras]
+        return data
+
+
 def figura_from_dict(data):
     tipo = data.get("tipo")
     cor_b = data.get("cor_borda", "black")
@@ -159,5 +217,9 @@ def figura_from_dict(data):
         fig = Poligono(data["cx"], data["cy"], data["num_lados"], cor_b, cor_p)
         fig.pontos = data["pontos"]
         return fig
+    elif tipo == "FiguraComposta":
+        filhas = [figura_from_dict(item) for item in data.get("figuras", [])]
+        filhas = [f for f in filhas if f is not None]
+        return FiguraComposta(filhas, cor_b, cor_p)
 
     return None
